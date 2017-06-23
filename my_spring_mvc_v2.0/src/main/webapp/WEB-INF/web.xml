@@ -1,0 +1,106 @@
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
+
+    <display-name>my_spring_mvc</display-name>
+
+    <!-- 将web容器与spring容器整合 -->
+    <context-param>
+        <description>配置Spring配置文件路径</description>
+        <param-name>contextConfigLocation</param-name>
+        <!-- 如果是监听多个文件，可用‘，’隔开 -->
+        <param-value>classpath:/config/spring-context.xml</param-value>
+    </context-param>
+
+    <!--web启动时加载spring-->
+    <listener>
+        <description>配置Spring上下文监听器</description>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- 负责处理javabean缓存防止内存泄露，spring托管的bean不需要这个监听器 -->
+    <listener>
+        <description>Introspector缓存清除监听器</description>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+
+    <!-- 配置Spring字符编码过滤器 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--log4j配置文件加载-->
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>classpath:/config/core/log4j.properties</param-value>
+    </context-param>
+    <!--启动一个watchdog线程每1800秒扫描一下log4j配置文件的变化-->
+    <context-param>
+        <param-name>log4jRefreshInterval</param-name>
+        <param-value>1800000</param-value>
+    </context-param>
+    <!--spring log4j监听器-->
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+
+
+
+    <!--########## Spring MVC 核心控制器 DispatcherServlet 配置开始 ############-->
+    <!-- DispatcherServlet可配置多个，通过拦截不同的请求走不同的Dispatcher-->
+    <servlet>
+        <servlet-name>springMVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- 可以通过contextConfigLocation来自定义SpringMVC配置文件的位置，如不指定，则默认在WEB-INF目录下，名称为[<servlet-name>]-servlet.xml，
+             此时文件名必须为[<servlet-name>]-servlet.xml，否则会出错-->
+
+        <!--以下init-param是自定义SpringMVC的配置文件的位置 -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:/config/spring-mvc-context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- 拦截设置 -->
+    <servlet-mapping>
+        <servlet-name>springMVC</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    <!--########## Spring MVC 核心控制器 DispatcherServlet 配置结束 ############-->
+
+    <!-- 激活defaultServlet来处理静态文件，通过配置的路径直接访问静态资源，不用其他servelt来解析，减轻服务器压力,-->
+    <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+        <init-param>
+            <param-name>useFileMappedBuffer</param-name>
+            <!-- 设置为false解决jetty容器启动时不能修改静态文件的问题. -->
+            <param-value>false</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>

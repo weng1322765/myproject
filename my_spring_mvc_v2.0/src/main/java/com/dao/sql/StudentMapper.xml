@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.dao.StudentMapper">
+    <select id="getAllStudents" resultType="com.DTO.StudentDTO">
+        select stu_num  "stuNum",
+               name     "name",
+               gender   "gender",
+               age      "age",
+               id_class "idClass",
+               mobile   "mobile",
+               address  "address",
+               remark   "remark"
+          from student
+    </select>
+
+    <select id="getByStuId" resultType="com.DTO.StudentDTO">
+        select stu_num  "stuNum",
+               name     "name",
+               gender   "gender",
+               age      "age",
+               id_class "idClass",
+               mobile   "mobile",
+               address  "address",
+               remark   "remark"
+          from student
+         where stu_num=#{stuNum}
+    </select>
+
+    <insert id="insertNewStudent" parameterType="com.DTO.StudentDTO">
+      insert into student
+          (stu_num, name, gender, age, id_class, mobile, address)
+        values
+          (#{stuNum}, #{name}, #{gender}, #{age}, #{idClass}, #{mobile}, #{address})
+    </insert>
+
+</mapper>
