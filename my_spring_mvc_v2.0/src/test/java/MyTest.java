@@ -21,6 +21,7 @@ public class MyTest extends BaseTest{
 
     @Test
     public void testMain(){
-        System.out.println(studentService.getAllStudents().size());
+
+        System.out.println("Hello World!");
     }
 }
