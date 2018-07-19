@@ -22,6 +22,6 @@ public class MyTest extends BaseTest{
     @Test
     public void testMain(){
 
-        System.out.println("Hello World!");
+        System.out.println("Hello World");
     }
 }
